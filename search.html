@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="js/scripts.js"></script>
+    <script>
+      if (isLoggedIn()) {
+        if (!isCoWorker()) {
+          window.location.href = 'index.html';
+        }
+      } else {
+        window.location.href = 'index.html';
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <img
+        src="images/logo.png"
+        class="logo"
+        alt="co-workers logo | #WORKOUTSIDETHEBOX"
+      />
+      <nav id="navigation">
+        <a href="index.html">
+          Home
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <h2>Search</h2>
+        <form action="results.html">
+          
+          <div>
+            <label for="type">Choose a filter</label>
+            <select
+              style="width: 200px; height: 28px; border: 1px solid silver; background: #fff;"
+              name="filter"
+              id="filter"
+              onChange="handleSearch()"
+            >
+              <option value="address">Address</option>
+              <option value="neighborhood">Neighborhood</option>
+              <option value="sqft">Square Feet</option>
+              <option value="withParking">With Parking</option>
+              <option value="withoutParking">Without Parking</option>
+              <option value="withTransportation">With Public Transportation</option>
+              <option value="withoutTransportation">Without Public Transportation</option>
+              <option value="seating">Seating Capacity</option>
+              <option value="withSmoking">With Smoking</option>
+              <option value="withoutSmoking">Without Smoking</option>
+              <option value="availibilityDate">Availibility Date</option>
+              <option value="leaseTerm">Lease Term</option>
+              <option value="price">Price</option>
+            </select>
+          </div>
+          <div id="search-field">
+            <label for="name">Search</label>
+            <input
+              type="text"
+              name="query"
+              placeholder="Query"
+            />
+          </div>
+          <div>
+            <button>Search</button>
+            <button class="standard">Reset</button>
+          </div>
+        </form>
+    </main>
+
+    <footer>
+      &copy; 2020, co-workers.com | Designed & Developed by Nikita
+    </footer>
+    <script>
+      function handleSearch() {
+        var value = document.getElementById('filter').value;
+        var searchField = document.getElementById('search-field');
+
+        if(value == 'withParking' || value == 'withoutParking' || value == 'withTransportation' || value == 'withoutTransportation' || value == 'withSmoking' || value == 'withoutSmoking') {
+          searchField.style.display = 'none';
+        } else {
+          searchField.style.display = 'flex';
+        }
+      }
+    </script>
+  </body>
+</html>

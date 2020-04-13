@@ -1,0 +1,176 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="js/scripts.js"></script>
+    <script>
+      if (isLoggedIn()) {
+        if (!isOwner()) {
+          window.location.href = 'index.html';
+        }
+      } else {
+        window.location.href = 'index.html';
+      }
+	      
+		
+		  
+		var email = JSON.parse(sessionStorage.getItem('user')).recordsets[0][0].Email;		
+		
+		var link = "http://localhost:3000/api/myprop?uname=" + email;		
+		var req = new XMLHttpRequest();
+		req.open('GET',link,true);		
+		req.onload = function(){
+			
+			var data = JSON.parse(this.response);
+		
+			if (req.status >= 200 && req.status < 400) 
+			{				
+				
+				if(data.recordset.length>0)
+				{
+					var output = "<h2 >Your Properties</h2>"
+        
+		
+					output +="<table id='properties' cellpadding='20'><tr><th>Address</th><th>Neighborhood</th><th>Square Feet</th><th>Parking Garage</th><th>Accessible by Public Transport</th><th>Show in Listing</th><th>Workspace</th><th>Edit</th></tr>";
+					var output1="";
+					
+					for (var i = 0; i < data.recordset.length; i++) 
+					{
+						var workspace;
+						if (data.recordset[i].showworkspace == "true")
+						{
+							workspace = "Unlist"
+						}
+						else
+						{
+							workspace = "List"
+						}
+						output1 += "<tr><td>" + data.recordset[i].address + '</td><td>' + data.recordset[i].neighbor + '</td><td>' + data.recordset[i].sqft + "</td><td>" + data.recordset[i].garage + "</td><td>" + data.recordset[i].publictransp + "</td>" + "<td><a href=javascript:listunlist(" + data.recordset[i].propid + "," + data.recordset[i].showworkspace + ")" + ">" + workspace + "</a></td><td><a href=my-workspaces.html?id=" + data.recordset[i].propid + ">View</a> <a href=add-workspace.html?pid=" + data.recordset[i].propid + ">Add</a> <a href=javascript:deleteproperty(" + data.recordset[i].propid + ")" + ">Delete</a><td><a href=edit-property.html?pid=" + data.recordset[i].propid + ">Edit</a></td></tr>";
+					}
+					
+					document.getElementById("temparea").innerHTML=output + output1 + "</table>";
+				}
+				else
+				{
+					document.getElementById("temparea").innerHTML="<h3 align='center'>No Properties found</h3>";
+				}
+			}
+			else
+			{
+				document.getElementById("temparea").innerHTML="Error in page";
+			}	
+		}
+		req.send();
+		
+		function listunlist(propid, status)
+		{
+			
+		  var link = "http://localhost:3000/api/luproperty";
+			
+		  var data = JSON.stringify({"propid": propid, "slist": status})
+			
+			var req = new XMLHttpRequest();
+			req.open('PUT',link,true);
+			req.setRequestHeader("Content-Type", "application/json");
+					
+			req.onload = function(){
+			
+			var obj = this.response;
+			if (req.status >= 200 && req.status < 400) {
+					var result = JSON.parse(obj);	
+					if(result.originalError!=null)
+					{
+						if(result.originalError.sqlstate==23000)
+						{
+							document.getElementById("resultarea").innerHTML="<h3>error occured</h3>";
+						}
+					}
+					else if(result.rowsAffected!=null)
+					{
+						if(result.rowsAffected[0]>=1)
+						{				
+							
+							window.location.href = 'my-properties.html?uname=' + email;					
+						}				
+					}
+					
+			 }
+			 else{
+					console.log("No answer");
+			 }
+			}
+			req.send(data);				
+			
+
+			
+			
+		}
+		function deleteproperty(propid)
+		{
+			
+		  var link = "http://localhost:3000/api/delproperty?propid=" + propid;
+			
+			var req = new XMLHttpRequest();
+			req.open('DELETE',link,true);			
+					
+			req.onload = function(){
+			
+			var obj = this.response;
+			if (req.status >= 200 && req.status < 400) {
+					
+					var result = JSON.parse(obj);	
+					if(result.originalError!=null)
+					{
+						if(result.originalError.sqlstate==23000)
+						{
+							document.getElementById("resultarea").innerHTML="<h3>error occured</h3>";
+						}
+					}
+					else if(result.rowsAffected!=null)
+					{
+						if(result.rowsAffected[0]==1)
+						{				
+							
+							window.location.href = 'my-properties.html?uname=' + email;								
+						}				
+					}					
+			 }
+			 else{
+					console.log("No answer");
+			 }
+			}
+			req.send();				
+			
+
+			
+			
+		}
+    </script>
+  </head>
+  <body>
+    <header>
+      <img
+        src="images/logo.png"
+        class="logo"
+        alt="co-workers logo | #WORKOUTSIDETHEBOX"
+      />
+      <nav id="navigation">
+        <a href="index.html">
+          Home
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <div id="temparea"></div>
+      </section>
+    </main>
+
+    <footer>
+      &copy; 2020, co-workers.com | Designed & Developed by Nikita
+    </footer>
+   
+    </script>
+  </body>
+</html>

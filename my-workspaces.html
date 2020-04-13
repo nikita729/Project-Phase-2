@@ -1,0 +1,186 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="js/scripts.js"></script>
+    <script>
+      if (isLoggedIn()) {
+        if (!isOwner()) {
+          window.location.href = 'index.html';
+        }
+      } else {
+        window.location.href = 'index.html';
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <img
+        src="images/logo.png"
+        class="logo"
+        alt="co-workers logo | #WORKOUTSIDETHEBOX"
+      />
+      <nav id="navigation">
+        <a href="index.html">
+          Home
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        
+        <table id="workspaces" cellpadding="20">
+			<div id="temparea"></div>
+        </table>
+      </section>
+    </main>
+
+    <footer>
+      &copy; 2020, co-workers.com | Designed & Developed by Nikita
+    </footer>
+    <script>
+      var urlParams = new URLSearchParams(window.location.search);
+      var id = urlParams.get('id');
+	  var link = "http://localhost:3000/api/showworkspaces?propid=" + id;		
+		var req = new XMLHttpRequest();
+		req.open('GET',link,true);		
+		req.onload = function(){
+			
+			var data = JSON.parse(this.response);
+		
+			if (req.status >= 200 && req.status < 400) 
+			{				
+				
+				if(data.recordset.length>0)
+				{
+					var output = "<h2>Your Workspaces</h2>"
+        
+		
+					output +="<table id='properties' cellpadding='20'><tr> <th>Name</th><th>Type</th><th>Seating Capacity</th><th>Availibility</th><th>Lease Term</th><th>Price</th><th>Smoking</th><th>Edit</th></tr>";
+					var output1="";
+					
+					for (var i = 0; i < data.recordset.length; i++) 
+					{
+						var smoking, listing;
+						if (data.recordset[i].smoking == "true")
+						{
+							smoking = "Allowed"
+						}
+						else
+						{
+							smoking = "Not Allowed"
+						}
+						if (data.recordset[i].showinlisting == "true")
+						{
+							listing = "Unlist"
+						}
+						else
+						{
+							listing = "List"
+						}
+						output1 += "<tr><td>" + data.recordset[i].wkname + '</td><td>' + data.recordset[i].wktype + '</td><td>' + data.recordset[i].scap + "</td><td>" + data.recordset[i].availdate + "</td><td>" + data.recordset[i].lterm + "</td><td>" + data.recordset[i].price + "</td><td>" + smoking + "</td><td><a href=edit-workspace.html?wid=" + data.recordset[i].wkid + ">Edit</a> <a href=javascript:deleteworkspace(" + data.recordset[i].wkid + ")" + ">Delete</a>" + "</td><td><a href=javascript:listunlist(" + data.recordset[i].wkid + "," + data.recordset[i].showinlisting + ")" + ">" + listing + "</a></tr>";
+					}
+					
+					document.getElementById("temparea").innerHTML=output + output1 + "</table>";
+				}
+				else
+				{
+					document.getElementById("temparea").innerHTML="<h3 align='center'>No Workspaces found</h3>";
+				}
+			}
+			else
+			{
+				document.getElementById("temparea").innerHTML="Error in page";
+			}	
+		}
+		req.send();
+     
+		function listunlist(wid, status)
+		{
+			
+		  var link = "http://localhost:3000/api/luworkspace";
+			
+		  var data = JSON.stringify({"wkid": wid, "slist": status})
+			
+			var req = new XMLHttpRequest();
+			req.open('PUT',link,true);
+			req.setRequestHeader("Content-Type", "application/json");
+					
+			req.onload = function(){
+			
+			var obj = this.response;
+			if (req.status >= 200 && req.status < 400) {
+					var result = JSON.parse(obj);	
+					if(result.originalError!=null)
+					{
+						if(result.originalError.sqlstate==23000)
+						{
+							document.getElementById("resultarea").innerHTML="<h3>error occured</h3>";
+						}
+					}
+					else if(result.rowsAffected!=null)
+					{
+						if(result.rowsAffected[0]==1)
+						{				
+							
+							window.location.href = 'my-workspaces.html?id=' + id;					
+						}				
+					}
+					
+			 }
+			 else{
+					console.log("No answer");
+			 }
+			}
+			req.send(data);				
+			
+
+			
+			
+		}
+		function deleteworkspace(wid)
+		{
+			
+		  var link = "http://localhost:3000/api/delworkspace?wkid=" + wid;
+			
+			var req = new XMLHttpRequest();
+			req.open('DELETE',link,true);			
+					
+			req.onload = function(){
+			
+			var obj = this.response;
+			if (req.status >= 200 && req.status < 400) {
+					
+					var result = JSON.parse(obj);	
+					if(result.originalError!=null)
+					{
+						if(result.originalError.sqlstate==23000)
+						{
+							document.getElementById("resultarea").innerHTML="<h3>error occured</h3>";
+						}
+					}
+					else if(result.rowsAffected!=null)
+					{
+						if(result.rowsAffected[0]==1)
+						{				
+							
+							window.location.href = 'my-workspaces.html?id=' + id;					
+						}				
+					}					
+			 }
+			 else{
+					console.log("No answer");
+			 }
+			}
+			req.send();				
+			
+
+			
+			
+		}
+	 
+	 
+    </script>
+  </body>
+</html>

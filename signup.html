@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="js/scripts.js"></script>
+    <script>
+      if (isLoggedIn()) {
+        window.location.href = 'index.html';
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <img
+        src="images/logo.png"
+        class="logo"
+        alt="co-workers logo | #WORKOUTSIDETHEBOX"
+      />
+      <nav id="navigation">
+        <a href="index.html">
+          Home
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <h2>Signup</h2>
+        <form onSubmit="signUp(event)" method="post">
+          <div>
+            <label for="name">Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              id="signup-name"
+            />
+          </div>
+          <div>
+            <label for="name">Phone Number</label>
+            <input
+              type="number"
+              name="phone-number"
+              placeholder="Phone Number"
+              id="signup-phone-number"
+            />
+          </div>
+          <div>
+            <label for="name">Email Address</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              id="signup-email"
+            />
+          </div>
+          <div>
+            <label for="password">Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              id="signup-password"
+            />
+          </div>
+          <div>
+            <label for="name">Role</label>
+            <div>
+              <input type="radio" name="role" value="owner" id="signup-role" />
+              Owner
+              <input
+                type="radio"
+                name="role"
+                value="co-worker"
+                id="signup-role"
+              />Co Worker
+            </div>
+          </div>
+          <div>
+            <button>Signup</button>
+            <button class="standard">Reset</button>
+          </div>
+		  <div id="resultarea"></div>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      &copy; 2020, co-workers.com | Designed & Developed by Nikita
+    </footer>
+  </body>
+</html>

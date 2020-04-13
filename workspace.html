@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="js/scripts.js"></script>
+    <script>
+      if (isLoggedIn()) {
+        if (!isCoWorker()) {
+          window.location.href = 'index.html';
+        }
+      } else {
+        window.location.href = 'index.html';
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <img
+        src="images/logo.png"
+        class="logo"
+        alt="co-workers logo | #WORKOUTSIDETHEBOX"
+      />
+      <nav id="navigation">
+        <a href="index.html">
+          Home
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="workspace">
+        <div id="temparea"></div>
+
+        
+      </section>
+    </main>
+
+    <footer>
+      &copy; 2020, co-workers.com | Designed & Developed by Nikita
+    </footer>
+  </body>
+  <script>
+    var urlParams = new URLSearchParams(window.location.search);
+    var workspaceId = urlParams.get('wkid');
+    
+	var link = "http://localhost:3000/api/workspacealldetails?wkid=" + workspaceId;		
+		var req = new XMLHttpRequest();
+		req.open('GET',link,true);		
+		req.onload = function(){
+			
+			var data = JSON.parse(this.response);
+		
+			if (req.status >= 200 && req.status < 400) 
+			{				
+				
+				if(data.recordset.length>0)
+				{
+					var output = "<h2>Workspace Details</h2>"
+        
+					var smoking = data.recordset[0].smoking =="true" ? "Allowed" : "Not Allowed";
+					var garage = data.recordset[0].garage ?"Yes": "No";
+					var pubtrans = data.recordset[0].publictransp ?"Yes": "No";
+					output +="<div id='workspace-details'>";
+					var output1="<h3>Property Details</h3><div id='property-details'>";
+					var output2="<h3>Owner Details</h3><div id='owner-details'>"
+									
+					output += "Name : " + data.recordset[0].wkname + '<br>Type : ' + data.recordset[0].wktype + '<br>Seating Capacity : ' + data.recordset[0].scap + "<br>Availablity Date : " + data.recordset[0].availdate + "<br>Lease : " + data.recordset[0].lterm + "<br>Price : " + data.recordset[0].price + "<br>Smoking : " + smoking + "</div><hr />";
+					
+					output1 += "Address : " + data.recordset[0].address + '<br>Neighbourhood : ' + data.recordset[0].neighbor + '<br>Square Feet : ' + data.recordset[0].sqft + "<br>Parking Garage : " + garage + "<br>Accessible to Public Transportation : " + pubtrans + "</div><hr />";
+					
+					output2 += "Name : " + data.recordset[0].Name + '<br>Email : ' + data.recordset[0].username + '<br>Phone : ' + data.recordset[0].Phone + "</div>";
+					
+					
+					document.getElementById("temparea").innerHTML=output + output1 + output2;
+				}
+				else
+				{
+					document.getElementById("temparea").innerHTML="No Properties found";
+				}
+			}
+			else
+			{
+				document.getElementById("temparea").innerHTML="Error in page";
+			}	
+		}
+		req.send();
+  </script>
+</html>

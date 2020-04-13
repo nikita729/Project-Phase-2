@@ -1,0 +1,97 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="js/scripts.js"></script>
+    <script>
+      if (isLoggedIn()) {
+        if (!isCoWorker()) {
+          window.location.href = 'index.html';
+        }
+      } else {
+        window.location.href = 'index.html';
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <img
+        src="images/logo.png"
+        class="logo"
+        alt="co-workers logo | #WORKOUTSIDETHEBOX"
+      />
+      <nav id="navigation">
+        <a href="index.html">
+          Home
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <div id="resultarea"></div>
+      </section>
+    </main>
+
+    <footer>
+      &copy; 2020, co-workers.com | Designed & Developed by Nikita
+    </footer>
+    <script>
+      var urlParams = new URLSearchParams(window.location.search);
+      var query="", filter="";
+	  if(urlParams.get('query')!=null)
+	  {
+		query = urlParams.get('query').toLowerCase();
+	  }
+	  if(urlParams.get('filter')!=null)
+	  {
+		filter = urlParams.get('filter');
+	  }
+	  var link = "http://localhost:3000/api/searchq?filter=" + filter + "&query=" + query;
+	
+	
+
+	var req = new XMLHttpRequest();
+	req.open('GET',link,true);
+    req.setRequestHeader("Content-Type", "application/json");
+	
+				
+	req.onload = function(){
+	
+	var obj = this.response;
+	if (req.status >= 200 && req.status < 400) {
+			var result = JSON.parse(obj);	
+			
+			if(result.originalError!=null)
+			{				
+				document.getElementById("resultarea").innerHTML=result.originalError;			
+			}			
+			else if(result.recordset.length>0)
+			{			
+				var output1 = "<h2>All Workspaces</h2><table id='workspaces' cellpadding='20'><tr><th>Name</th><th>Type</th><th>Seating Capacity</th><th>Availibility</th><th>Lease Term</th><th>Price</th><th>Smoking</th><th>View</th></tr>";
+				
+				for (var i = 0; i < result.recordset.length; i++) 
+					{
+						var smoking = result.recordset[i].smoking=="true" ? "Allowed" : "Not Allowed";
+						output1 += "<tr><td>" + result.recordset[i].wkname + '</td><td>' + result.recordset[i].wktype + '</td><td>' + result.recordset[i].scap + "</td><td>" + result.recordset[i].availdate + "</td><td>" + result.recordset[i].lterm + "</td>" + "<td>" + result.recordset[i].price + "</td><td>" + smoking + "</td><td><a href=workspace.html?wkid=" + result.recordset[i].wkid +">View</a></td></tr>";
+					}
+				document.getElementById("resultarea").innerHTML=output1;
+			}
+			else
+			{
+				document.getElementById("resultarea").innerHTML="<h3 align='center'>No Results found</h3>";
+			}
+			
+			
+	 }
+	 else{
+			console.log("No answer");
+	 }
+	}
+	req.send();	
+      
+        
+      
+    </script>
+  </body>
+</html>

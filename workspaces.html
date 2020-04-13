@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <title>Co Workers - Homepage</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css" />
+    <script src="js/scripts.js"></script>
+    <script>
+      if (isLoggedIn()) {
+        if (!isCoWorker()) {
+          window.location.href = 'index.html';
+        }
+      } else {
+        window.location.href = 'index.html';
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <img
+        src="images/logo.png"
+        class="logo"
+        alt="co-workers logo | #WORKOUTSIDETHEBOX"
+      />
+      <nav id="navigation">
+        <a href="index.html">
+          Home
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        
+        <div id="temparea"></div>
+      </section>
+    </main>
+
+    <footer>
+      &copy; 2020, co-workers.com | Designed & Developed by Nikita
+    </footer>
+    <script>
+     
+     	
+		var link = "http://localhost:3000/api/allworkspaces";		
+		var req = new XMLHttpRequest();
+		req.open('GET',link,true);		
+		req.onload = function(){
+			
+			var data = JSON.parse(this.response);
+		
+			if (req.status >= 200 && req.status < 400) 
+			{				
+				
+				if(data.recordset.length>0)
+				{
+					var output = "<h2>All Workspaces</h2>"
+        
+					
+					output +="<table id='workspaces' cellpadding='20'><tr><th>Name</th><th>Type</th><th>Seating Capacity</th><th>Availibility</th><th>Lease Term</th><th>Price</th><th>Smoking</th><th>View</th></tr>";
+					var output1="";
+					
+					for (var i = 0; i < data.recordset.length; i++) 
+					{
+						var smoking = data.recordset[i].smoking=="true" ? "Allowed" : "Not Allowed";
+						output1 += "<tr><td>" + data.recordset[i].wkname + '</td><td>' + data.recordset[i].wktype + '</td><td>' + data.recordset[i].scap + "</td><td>" + data.recordset[i].availdate + "</td><td>" + data.recordset[i].lterm + "</td>" + "<td>" + data.recordset[i].price + "</td><td>" + smoking + "</td><td><a href=workspace.html?wkid=" + data.recordset[i].wkid +">View</a></td></tr>";
+					}
+					
+					document.getElementById("temparea").innerHTML=output + output1 + "</table>";
+				}
+				else
+				{
+					document.getElementById("temparea").innerHTML="No Properties found";
+				}
+			}
+			else
+			{
+				document.getElementById("temparea").innerHTML="Error in page";
+			}	
+		}
+		req.send();
+    </script>
+  </body>
+</html>
